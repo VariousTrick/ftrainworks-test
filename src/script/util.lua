@@ -144,7 +144,7 @@ local function find_nearest_carriages(surface, position, radius)
         surface = surface,
         position = position,
         radius = radius,
-        name = { "locomotive", "cargo-wagon", "fluid-wagon", "artillery-wagon" }
+        type = { "locomotive", "cargo-wagon", "fluid-wagon", "artillery-wagon" }
     }
     return carriages
 end

@@ -154,11 +154,11 @@ local function sensor_report(sensor_unit_number, active_sensor_data)
 
     -- Depending on configuration, set filters and emit signals
     local filters = {}
-    if carriage.name == "cargo-wagon" then
+    if carriage.type == "cargo-wagon" then
         if read_type then
             -- Emit carriage type signal
             table.insert(filters, {
-                value = { type = "item", name = "cargo-wagon", quality = "normal" },
+                value = { type = "item", name = carriage.name, quality = "normal" },
                 min = 1,
                 max = 1
             })
@@ -177,11 +177,11 @@ local function sensor_report(sensor_unit_number, active_sensor_data)
                 })
             end
         end
-    elseif carriage.name == "fluid-wagon" then
+    elseif carriage.type == "fluid-wagon" then
         if read_type then
             -- Emit carriage type signal
             table.insert(filters, {
-                value = { type = "item", name = "fluid-wagon", quality = "normal" },
+                value = { type = "item", name = carriage.name, quality = "normal" },
                 min = 1,
                 max = 1
             })
@@ -196,11 +196,11 @@ local function sensor_report(sensor_unit_number, active_sensor_data)
                 })
             end
         end
-    elseif carriage.name == "artillery-wagon" then
+    elseif carriage.type == "artillery-wagon" then
         if read_type then
             -- Emit carriage type signal
             table.insert(filters, {
-                value = { type = "item", name = "artillery-wagon", quality = "normal" },
+                value = { type = "item", name = carriage.name, quality = "normal" },
                 min = 1,
                 max = 1
             })
@@ -219,11 +219,11 @@ local function sensor_report(sensor_unit_number, active_sensor_data)
                 })
             end
         end
-    elseif carriage.name == "locomotive" then
+    elseif carriage.type == "locomotive" then
         if read_type then
             -- Emit carriage type signal
             table.insert(filters, {
-                value = { type = "item", name = "locomotive", quality = "normal" },
+                value = { type = "item", name = carriage.name, quality = "normal" },
                 min = 1,
                 max = 1
             })
@@ -231,15 +231,17 @@ local function sensor_report(sensor_unit_number, active_sensor_data)
         if read_fuel then
             -- Read fuel and emit signals
             local fuel_inventory = carriage.get_fuel_inventory()
-            if not (fuel_inventory and fuel_inventory.valid) then return end
 
-            -- Loop through fuel contents and set filters
-            for _, item in pairs(fuel_inventory.get_contents()) do
-                table.insert(filters, {
-                    value = { type = "item", name = item.name, quality = item.quality },
-                    min = item.count,
-                    max = item.count
-                })
+            -- Fix: Support locomotives without fuel inventory (e.g. void energy sources)
+            if fuel_inventory and fuel_inventory.valid then
+                -- Loop through fuel contents and set filters
+                for _, item in pairs(fuel_inventory.get_contents()) do
+                    table.insert(filters, {
+                        value = { type = "item", name = item.name, quality = item.quality },
+                        min = item.count,
+                        max = item.count
+                    })
+                end
             end
         end
     end
